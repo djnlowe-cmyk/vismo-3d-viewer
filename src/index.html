@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vismo - 3D Model Viewer</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="cesium-container"></div>
+
+  <div id="ui-panel" class="ui-panel">
+    <div class="panel-header">BIM/CAD Viewer</div>
+
+    <!-- Map Controls -->
+    <div class="control-section">
+      <h3>Map & Location</h3>
+      <div id="location-info" style="font-size: 0.85em; color: #888; margin-bottom: 10px;">
+        📍 London, UK
+      </div>
+      <label>
+        Latitude
+        <input type="number" id="latitude" value="51.5074" step="0.0001" />
+      </label>
+      <label>
+        Longitude
+        <input type="number" id="longitude" value="-0.1278" step="0.0001" />
+      </label>
+      <label>
+        Elevation (m)
+        <input type="number" id="elevation" value="100" step="1" />
+      </label>
+      <button id="goto-location-btn">Go to Location</button>
+    </div>
+
+    <!-- Layer Controls -->
+    <div class="control-section">
+      <h3>Layers</h3>
+      <label>
+        <input type="checkbox" id="osm-buildings-layer" checked />
+        OSM Buildings (3D Tiles)
+      </label>
+      <label>
+        <input type="checkbox" id="terrain-layer" checked />
+        Terrain
+      </label>
+      <label>
+        <input type="checkbox" id="imagery-layer" checked />
+        Satellite Imagery
+      </label>
+    </div>
+
+    <!-- BIM Model Loading -->
+    <div class="control-section">
+      <h3>Load BIM/CAD Model</h3>
+      <input type="file" id="bim-input" accept=".glb,.gltf,.ifc,.rvt,.las,.laz,.obj,.fbx,.dae" />
+      <div id="file-info">Supports: glTF, glB, IFC, Revit, LAS, OBJ, FBX, DAE</div>
+      <button id="load-sample-bim-btn">Load Sample Building</button>
+    </div>
+
+    <!-- Model Management -->
+    <div class="control-section">
+      <h3>Models</h3>
+      <div id="models-list" class="models-list">
+        <div class="no-models">No models loaded</div>
+      </div>
+    </div>
+
+    <!-- Model Info -->
+    <div class="control-section">
+      <h3>Model Info</h3>
+      <div id="model-info">No model selected</div>
+    </div>
+
+    <!-- Display Options -->
+    <div class="control-section">
+      <h3>Display Options</h3>
+      <label>
+        <input type="checkbox" id="show-properties" checked />
+        Show Properties Panel
+      </label>
+      <label>
+        Model Opacity
+        <input type="range" id="model-opacity" min="0" max="1" step="0.1" value="1" />
+        <span id="model-opacity-value">1.0</span>
+      </label>
+    </div>
+
+    <!-- Point Cloud Options -->
+    <div class="control-section" id="pointcloud-controls" style="display:none;">
+      <h3>Point Cloud Options</h3>
+      <label>
+        Point Size
+        <input type="range" id="point-size" min="0.1" max="20" step="0.1" value="1" />
+        <span id="point-size-value">1.0</span>
+      </label>
+      <label>
+        Color Mode
+        <select id="color-mode">
+          <option value="rgb">RGB (if available)</option>
+          <option value="elevation">Elevation Gradient</option>
+          <option value="intensity">Intensity</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- IFC Model Options -->
+    <div class="control-section" id="ifc-controls" style="display:none;">
+      <h3>IFC Model Options</h3>
+      <label>
+        Color Mode
+        <select id="ifc-color-mode">
+          <option value="type">By Type</option>
+          <option value="storey">By Storey</option>
+          <option value="uniform">Uniform Color</option>
+        </select>
+      </label>
+      <div id="ifc-element-visibility" style="margin-top: 10px; font-size: 0.9em;">
+        <strong>Element Visibility:</strong>
+        <label style="display: block; margin-top: 5px;">
+          <input type="checkbox" class="ifc-visibility" data-type="IfcWall" checked />
+          Walls
+        </label>
+        <label style="display: block;">
+          <input type="checkbox" class="ifc-visibility" data-type="IfcDoor" checked />
+          Doors
+        </label>
+        <label style="display: block;">
+          <input type="checkbox" class="ifc-visibility" data-type="IfcWindow" checked />
+          Windows
+        </label>
+        <label style="display: block;">
+          <input type="checkbox" class="ifc-visibility" data-type="IfcSlab" checked />
+          Slabs/Floors
+        </label>
+        <label style="display: block;">
+          <input type="checkbox" class="ifc-visibility" data-type="IfcBeam" checked />
+          Beams
+        </label>
+        <label style="display: block;">
+          <input type="checkbox" class="ifc-visibility" data-type="IfcColumn" checked />
+          Columns
+        </label>
+        <label style="display: block;">
+          <input type="checkbox" class="ifc-visibility" data-type="IfcStair" checked />
+          Stairs
+        </label>
+        <label style="display: block;">
+          <input type="checkbox" class="ifc-visibility" data-type="IfcRoof" checked />
+          Roofs
+        </label>
+      </div>
+    </div>
+
+    <!-- Model Transform Controls -->
+    <div class="control-section">
+      <h3>Model Transform</h3>
+      <label>
+        Scale
+        <input type="range" id="model-scale" min="0.1" max="5" step="0.1" value="1" />
+        <span id="model-scale-value">1.0</span>
+      </label>
+      <label>
+        Rotate X
+        <input type="range" id="model-rotate-x" min="0" max="360" step="1" value="0" />
+        <span id="model-rotate-x-value">0°</span>
+      </label>
+      <label>
+        Rotate Y
+        <input type="range" id="model-rotate-y" min="0" max="360" step="1" value="0" />
+        <span id="model-rotate-y-value">0°</span>
+      </label>
+      <label>
+        Rotate Z
+        <input type="range" id="model-rotate-z" min="0" max="360" step="1" value="0" />
+        <span id="model-rotate-z-value">0°</span>
+      </label>
+      <label>
+        Position X
+        <input type="number" id="model-pos-x" value="0" step="5" />
+      </label>
+      <label>
+        Position Y
+        <input type="number" id="model-pos-y" value="0" step="5" />
+      </label>
+      <label>
+        Position Z
+        <input type="number" id="model-pos-z" value="0" step="5" />
+      </label>
+      <button id="reset-model-transform-btn">Reset Transform</button>
+    </div>
+
+    <!-- Navigation -->
+    <div class="control-section">
+      <button id="reset-view-btn">Reset View</button>
+      <button id="toggle-panel-btn">Hide Controls</button>
+    </div>
+  </div>
+
+  <!-- Properties Panel -->
+  <div id="properties-panel" class="properties-panel">
+    <div class="properties-header">
+      <h3>Object Properties</h3>
+      <button id="close-properties-btn" class="close-btn">×</button>
+    </div>
+    <div id="properties-content" class="properties-content">
+      <p>Click on a model to see properties</p>
+    </div>
+  </div>
+
+  <!-- Keyboard Hints Overlay -->
+  <div id="keyboard-hints" class="keyboard-hints">
+    <div class="keyboard-hint-content">
+      <strong>Controls</strong>
+      <p><kbd>H</kbd> - Toggle Panel</p>
+      <p><kbd>Left Click</kbd> - Rotate</p>
+      <p><kbd>Right Click</kbd> - Pan</p>
+      <p><kbd>Scroll</kbd> - Zoom</p>
+    </div>
+  </div>
+
+  <script src="./index.js"></script>
+</body>
+</html>

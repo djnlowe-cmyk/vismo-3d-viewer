@@ -1,0 +1,41 @@
+{
+  "name": "bim-cad-viewer",
+  "version": "1.0.0",
+  "description": "A BIM/CAD viewer with OSM 3D Tiles background using Cesium.js",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "webpack serve --mode development",
+    "build": "webpack --mode production",
+    "watch": "webpack --mode development --watch",
+    "test": "node run-tests-node.js",
+    "start": "npm run build && node server.js"
+  },
+  "keywords": [
+    "bim",
+    "cad",
+    "cesium",
+    "3d-tiles",
+    "gis"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.8.1",
+    "html-webpack-plugin": "^5.5.3",
+    "style-loader": "^3.3.3",
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  },
+  "dependencies": {
+    "express": "^4.22.1",
+    "laz-perf": "^0.0.7",
+    "three": "^0.148.0",
+    "three-gltf-loader": "^1.111.0",
+    "web-ifc": "^0.0.75"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
