@@ -3,25 +3,41 @@
  * Serves the built webpack app on Render.com or any Node.js host
  */
 
-const express = require('express');
-const path = require('path');
-const app = express();
+console.log('Server.js is starting...');
 
-const PORT = process.env.PORT || 3000;
-const distPath = path.join(__dirname, 'dist');
+try {
+  const express = require('express');
+  const path = require('path');
 
-// Serve static files from dist directory
-app.use(express.static(distPath));
+  console.log('Express loaded successfully');
 
-// Serve public files (sample data)
-app.use(express.static(path.join(__dirname, 'public')));
+  const app = express();
+  const PORT = process.env.PORT || 3000;
+  const distPath = path.join(__dirname, 'dist');
 
-// SPA fallback - serve index.html for all routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
-});
+  console.log(`Port: ${PORT}`);
+  console.log(`Dist path: ${distPath}`);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Serving: ${distPath}`);
-});
+  // Serve static files from dist directory
+  app.use(express.static(distPath));
+  app.use(express.static(path.join(__dirname, 'public')));
+
+  // SPA fallback
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+
+  const server = app.listen(PORT, () => {
+    console.log(`✅ SERVER STARTED ON PORT ${PORT}`);
+    console.log(`📁 Serving from: ${distPath}`);
+  });
+
+  server.on('error', (err) => {
+    console.error(`❌ Server error: ${err.message}`);
+  });
+
+} catch (err) {
+  console.error(`❌ Fatal error: ${err.message}`);
+  console.error(err.stack);
+  process.exit(1);
+}
