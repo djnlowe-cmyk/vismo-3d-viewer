@@ -3,15 +3,12 @@ services:
     name: vismo-3d-viewer
     env: node
     plan: free
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: npm install && npm run build
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 3000
     healthCheckPath: /
-    staticPublicPath: dist
     headers:
       - path: /*
         name: X-Frame-Options
