@@ -7,9 +7,14 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <div id="cesium-container"></div>
+  <!-- Dashboard Container (shown by default) -->
+  <div id="app"></div>
 
-  <div id="ui-panel" class="ui-panel">
+  <!-- 3D Viewer Container (hidden by default) -->
+  <div id="viewer-container" style="display: none;">
+    <div id="cesium-container"></div>
+
+    <div id="ui-panel" class="ui-panel">
     <div class="panel-header">BIM/CAD Viewer</div>
 
     <!-- Map Controls -->
@@ -195,10 +200,10 @@
       <button id="reset-view-btn">Reset View</button>
       <button id="toggle-panel-btn">Hide Controls</button>
     </div>
-  </div>
+    </div>
 
-  <!-- Properties Panel -->
-  <div id="properties-panel" class="properties-panel">
+    <!-- Properties Panel -->
+    <div id="properties-panel" class="properties-panel">
     <div class="properties-header">
       <h3>Object Properties</h3>
       <button id="close-properties-btn" class="close-btn">×</button>
@@ -208,17 +213,18 @@
     </div>
   </div>
 
-  <!-- Keyboard Hints Overlay -->
-  <div id="keyboard-hints" class="keyboard-hints">
-    <div class="keyboard-hint-content">
-      <strong>Controls</strong>
-      <p><kbd>H</kbd> - Toggle Panel</p>
-      <p><kbd>Left Click</kbd> - Rotate</p>
-      <p><kbd>Right Click</kbd> - Pan</p>
-      <p><kbd>Scroll</kbd> - Zoom</p>
+    <!-- Keyboard Hints Overlay -->
+    <div id="keyboard-hints" class="keyboard-hints">
+      <div class="keyboard-hint-content">
+        <strong>Controls</strong>
+        <p><kbd>H</kbd> - Toggle Panel</p>
+        <p><kbd>Left Click</kbd> - Rotate</p>
+        <p><kbd>Right Click</kbd> - Pan</p>
+        <p><kbd>Scroll</kbd> - Zoom</p>
+      </div>
     </div>
   </div>
 
-  <script src="./index.js"></script>
+  <script type="module" src="./index.js"></script>
 </body>
 </html>

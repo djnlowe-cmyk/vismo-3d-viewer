@@ -5,7 +5,87 @@ import { parseLAS } from './loaders/las-parser.js';
 import { createPointCloud, setPointSize, applyColorMode } from './loaders/las-loader.js';
 import { parseIFC, IFC_TYPES } from './loaders/ifc-parser.js';
 import { createIFCModel, getIFCModelBounds, setElementTypeVisibility, setElementTypeColor, highlightIFCElement, getIFCElementsByType } from './loaders/ifc-loader.js';
+import { router } from './utils/router.js';
+import { dashboard } from './views/dashboard.js';
+import { projectsAPI } from './api/projects.js';
 import './style.css';
+import './views/dashboard.css';
+
+// ========================================
+// ROUTER INITIALIZATION
+// ========================================
+
+// Initialize router and register routes
+async function initializeRouter() {
+  console.log('🚀 Initializing Vismo 3D Viewer');
+
+  // Dashboard route
+  router.register('/', async () => {
+    console.log('📊 Loading dashboard view');
+    const viewerContainer = document.getElementById('viewer-container');
+    viewerContainer.style.display = 'none';
+    await dashboard.init();
+  }, () => {
+    dashboard.cleanup();
+  });
+
+  // Project viewer route
+  router.register('/viewer/:id', async (params) => {
+    console.log(`👁️  Loading viewer for project ${params.id}`);
+    const viewerContainer = document.getElementById('viewer-container');
+    viewerContainer.style.display = 'block';
+
+    // Initialize 3D viewer if not already done
+    if (!window.vismoViewerInitialized) {
+      initializeViewer();
+      window.vismoViewerInitialized = true;
+    }
+
+    // Load project
+    try {
+      const project = await projectsAPI.getProject(params.id);
+      console.log('✅ Project loaded:', project);
+      // TODO: Load project model from S3 URL in Phase 4
+      alert(`Project loaded: ${project.name}\nS3 URL loading coming in Phase 4`);
+    } catch (err) {
+      console.error('Error loading project:', err);
+      alert('Failed to load project. Returning to dashboard.');
+      router.navigate('/');
+    }
+  });
+
+  // Profile route (stub for now)
+  router.register('/profile', async () => {
+    console.log('👤 Loading profile view');
+    alert('Profile view coming in Phase 5');
+    router.navigate('/');
+  });
+
+  // Navigate to dashboard on initial load
+  window.addEventListener('load', () => {
+    if (!window.location.hash) {
+      window.location.hash = '#/';
+    }
+  });
+}
+
+// Initialize router immediately
+initializeRouter();
+
+// ========================================
+// VIEWER INITIALIZATION
+// ========================================
+// The Three.js viewer initializes automatically on page load
+// This function is called when the viewer route is activated
+function initializeViewer() {
+  // Three.js scene is already set up on page load
+  // Just ensure the animation loop is running
+  if (!window.vismoAnimating) {
+    console.log('▶️  Starting 3D viewer animation loop');
+    window.vismoAnimating = true;
+    // animate() is called at the bottom of the file
+  }
+}
 
 const cesiumContainer = document.getElementById('cesium-container');
 const scene = new THREE.Scene();

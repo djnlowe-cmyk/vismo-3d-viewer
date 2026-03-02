@@ -1,14 +1,12 @@
 {
-  "name": "bim-cad-viewer",
-  "version": "1.0.0",
-  "description": "A BIM/CAD viewer with OSM 3D Tiles background using Cesium.js",
-  "main": "dist/main.js",
+  "name": "vismo-3d-viewer",
+  "version": "2.0.0",
+  "description": "Multi-project BIM/CAD viewer with cloud storage",
   "scripts": {
     "dev": "webpack serve --mode development",
     "build": "webpack --mode production",
     "watch": "webpack --mode development --watch",
-    "test": "node run-tests-node.js",
-    "start": "npm run build && node server.js"
+    "test": "node run-tests-node.js"
   },
   "keywords": [
     "bim",
@@ -29,13 +27,11 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
-    "express": "^4.22.1",
+    "firebase": "^10.7.0",
     "laz-perf": "^0.0.7",
     "three": "^0.148.0",
     "three-gltf-loader": "^1.111.0",
+    "uuid": "^9.0.0",
     "web-ifc": "^0.0.75"
-  },
-  "engines": {
-    "node": ">=18.0.0"
   }
 }
